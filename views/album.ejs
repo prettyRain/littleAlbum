@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>查看相册</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">小小相册</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/addAlbumPage">上传</a></li>
+                    <li><a href="/queryAllAlbum">展示</a></li>
+                    <li><a href="/addDir">创建相册</a></li>
+                    <li class="active"><a href="javascript:deletedir();" >删除</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+    </nav>
+    <ol class="breadcrumb">
+        <li><a href="/">小小相册</a></li>
+        <li><a href="#"><%=name%></a></li>
+    </ol>
+    <div class="jumbotron">
+        <div class="row">
+            <%for(var i in photoarr){%>
+            <div class="col-xs-6 col-md-3">
+                <a href="#" class="thumbnail">
+                    <img src="/<%=name%>/<%=photoarr[i]%>" alt="...">
+                </a>
+                <p style="text-align:center;font-size:14px;"><input type="checkbox" name="dir" value="<%=name%>/<%=photoarr[i]%>"><%=photoarr[i]%></p>
+            </div>
+            <%}%>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+<div class="modal fade" tabindex="-1" role="dialog" id="myInput">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">提示</h4>
+            </div>
+            <div class="modal-body">
+                <p>确认删除吗?&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary isdelete">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<input type="hidden" id="xiangce" value="<%=name%>">
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    var arr = [];
+    function deletedir(){
+        arr = [];
+        $('input[name=dir]:checked').each(function(index,item){
+            console.log(index,item);
+            arr.push(item.value);
+        })
+        if(arr.length>0){
+            $('#myInput').modal('show')
+        }
+    }
+    $('.isdelete').on('click',function(){
+        $('#myInput').modal('hide');
+        $.get('/deletedir',{arr:arr},function(data){
+            if(data=='success'){
+                window.location.href='/'+$('#xiangce').val();
+            }
+        })
+    })
+
+</script>
+</body>
+</html>
